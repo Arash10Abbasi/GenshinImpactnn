@@ -1,4 +1,4 @@
-# Fluidic Colours
+# Adventurers' Guild
 
 This is the reference manual for the website.
 
@@ -20,18 +20,14 @@ This document is made for self-reference.
     * Images for the theme and CSS
 
 ### FOLDER STRUCTURE
-* Colours
-    * articles, poems, short stories folders
-* Syntax
-    * programming, software, web development folders and files
-* FAQs
+* Character Builds
+    * weapons, artifacts, character guides, teams
+* Character Lore
+    * individual stories, main stories, quest summaries, world structures
+* About
     * FAQ folder
-* Continuum
-    * Science folder
-* Derivative
-    * maths folder
-* Apps
-    * apps folder
+* Honkai Impact
+    * any relevant information from Honkai Impact
 
 All the text files are in ``md`` format. The ones in txt format are auto-generated. HTML files are in the same folder.
 
@@ -39,16 +35,10 @@ All the text files are in ``md`` format. The ones in txt format are auto-generat
 
 * Master pages
     * index - home page
-    * syntax
-    * science
-    * maths
-    * faq
-    * blogs
- 
- * Reference pages
-    * landing
-    * elements
-    * generic
+    * CharacterBuilds
+    * CharacterLore
+    * HonkaiImpact
+    * About
 
 ### Other files
 
