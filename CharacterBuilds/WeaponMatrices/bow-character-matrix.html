@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Meta additions to hold no cache in github. This makes the website reload fresh. -->
+    <meta http-equiv='cache-control' content='no-cache'> 
+    <meta http-equiv='expires' content='0'> 
+    <meta http-equiv='pragma' content='no-cache'>
+
+    <!-- KaTeX CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);">
+    </script>
+
+    
+	<link rel="stylesheet" href="../../assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+
+    
+
+    <title>bow-character-matrix | CharacterBuilds | Adventurers's Guild</title>
+
+    </head>
+    
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header" class="alt">
+                <a href="./../../index.html" class="logo"><strong>Adventurers' Guild</strong>  <span>by Arun</span></a>
+            <nav>
+                <a href="#menu">Menu</a>
+            </nav>
+        </header>
+
+    <!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+            <li><a href="./../../index.html">Home</a></li>
+            <li><a href="./../../CharacterBuilds.html">Character Builds</a></li>
+            <li><a href="./../../CharacterLore.html">Character Lore</a></li>
+            <li><a href="./../../HonkaiImpact.html">Honkai Impact</a></li>
+            <li><a href="./../../About.html">About</a></li>
+            
+        </ul>
+    </nav>
+
+    <section>
+        <div class="inner align-justify">
+
+            <pre>
+                <code>
+    This page is a Work-In-Progress. Come back later for an updated version.
+                </code>
+            </pre>
+
+            <h1 id="weapon-character-matrix">Bow Character Matrix</h1>
+            <p>Hey there, Traveller! Welcome to the Bow Character Matrix. Pick a bow user of your choice and some of the bow(s) of your choice. A table will be generated comparing the selected character with the selected weapon(s) saying how compatible they are.</p>
+            <br>
+            
+            <h3> Pick a Bow User of choice</h3>
+            <form action="" id="CharacterSection">
+            </form>
+            <br>
+            <h3> Pick the Bow(s) of choice</h3>
+            <form action="" id="WeaponSection">
+            </form>
+            <h3>Test Zone</h3>
+            <p class="col" id="tableMsg"></p>
+            <br>
+            <div class="col">
+                <button type="button" class="btn btn-primary top10" id="LoadButton" onclick="LoadTable()">Load Table</button>
+            </div>
+            <br>
+            <div class="col">
+                <button type="button" class="btn btn-primary top10" id="ResetButton" onclick="StartOver()">Reset Table</button>
+            </div>
+            <br>
+            <h3>Table</h3>
+            <div class="table-wrapper">
+                <table class="table alt" id="MatrixTable">
+                    <thead>
+                        <tr class="header" id="MatrixTableHeader">
+        
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider" id="MatrixTableBody">
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript" language="javascript">
+
+        let MatrixFName = "./bow-character-matrix.json";
+        let CharacterSetName = "./character-list.json";
+        let CharacterSetIndex = 4;
+        let WeaponSetName = "./weapon-list.json";
+        let WeaponSetIndex = 4;
+        let matrix = {};
+        let tempMatrix = {};
+        let CharacterList = {};
+        let ReducedCharacterList = [];
+        let tempCharacterList = {};
+        let WeaponList = {};
+        let tempWeaponList = {};
+    
+        window.onload = (event) =>
+        {
+            SetupPage()
+        };
+    
+        async function SetupPage()
+        {
+            await FetchCharacters(CharacterSetName, CharacterSetIndex);
+            await FetchWeapons(WeaponSetName, WeaponSetIndex);
+            await FetchMatrix(MatrixFName);
+
+            InitializeCharacterList();
+            InitializeWeaponList();
+    
+            console.log("Load Button Ready!");
+            // InitializeForms();
+        }
+    
+        function TransferMatrix(MatrixJSON)
+        {
+            matrix = JSON.parse(JSON.stringify(MatrixJSON));
+            console.log("Got the Matrix!")
+            // console.log(Object.keys(matrix[0]))
+        }
+    
+        function TransferCharacters(CharacterJSON, index)
+        {
+            CharacterList = JSON.parse(JSON.stringify(CharacterJSON))[index];
+            ReducedCharacterList = Object.values(JSON.parse(JSON.stringify(CharacterJSON))[index]);
+            console.log("Got the Characters!")
+            // console.log(ReducedCharacterList)
+        }
+    
+        function TransferWeapons(WeaponJSON, index)
+        {
+            WeaponList = JSON.parse(JSON.stringify(WeaponJSON))[index];
+            console.log("Got the Weapons!")
+            // console.log(WeaponList)
+        }
+    
+        async function FetchMatrix(fname)
+        {
+            let MatrixInitializer = {
+                method:'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            }
+            await fetch(fname, MatrixInitializer)
+            .then(response => response.json())
+            .then(response => TransferMatrix(response))
+            .catch(error => console.error("Something went wrong in fetching " + fname + " " + error));
+        }
+    
+        async function FetchCharacters(fname, index)
+        {
+            let MatrixInitializer = {
+                method:'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            }
+            await fetch(fname, MatrixInitializer)
+            .then(response => response.json())
+            .then(response => TransferCharacters(response, index))
+            .catch(error => console.error("Something went wrong in fetching " + fname + " " + error));
+        }
+    
+        async function FetchWeapons(fname, index)
+        {
+            let MatrixInitializer = {
+                method:'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            }
+            await fetch(fname, MatrixInitializer)
+            .then(response => response.json())
+            .then(response => TransferWeapons(response, index))
+            .catch(error => console.error("Something went wrong in fetching " + fname + " " + error));
+        }
+
+        function InitializeCharacterList()
+            {
+                tempCharacterList = JSON.parse(JSON.stringify(CharacterList));
+                delete tempCharacterList["000"];
+
+                let htmlTags = "";
+
+                htmlTags += '<div class="row">';
+                for(characterID in tempCharacterList)
+                {
+                    htmlTags += '<div class="col-4 col-6-small">';
+                    htmlTags += `<input type="radio" id="character-${characterID}" name="character-radios">`;
+                    htmlTags += `<label for="character-${characterID}">`;
+                    htmlTags += tempCharacterList[characterID];
+                    htmlTags += '</label>'
+                    htmlTags += '</div>'
+                }
+                htmlTags += '</div>'
+                document.getElementById('CharacterSection').innerHTML = htmlTags;
+                // console.log(htmlTags)
+            }
+
+            function InitializeWeaponList()
+            {
+                tempWeaponList = JSON.parse(JSON.stringify(WeaponList));
+                delete tempWeaponList["000"];
+
+                let htmlTags = "";
+
+                htmlTags += '<div class="row">';
+                for(weaponID in tempWeaponList)
+                {
+                    htmlTags += '<div class="col-4 col-6-small">';
+                    htmlTags += `<input name="weapon-${weaponID}" id="weapon-${weaponID}" type="checkbox">`;
+                    htmlTags += `<label for="weapon-${weaponID}">`;
+                    htmlTags += tempWeaponList[weaponID];
+                    htmlTags += '</label>'
+                    htmlTags += '</div>'
+                }
+                htmlTags += '</div>'
+                document.getElementById('WeaponSection').innerHTML = htmlTags;
+                // console.log(htmlTags)
+            }
+    
+        function LoadTable()
+        {
+            // Get all the Checks from the Character Section
+            const CharacterSection = document.getElementById('CharacterSection');
+            const CharacterChecks = CharacterSection.getElementsByTagName('input');
+            let CharChecks = [];
+            let CharSum = 0;
+            for(let i = 0; i < CharacterChecks.length; i++)
+            {
+                CharChecks.push(CharacterChecks[i].checked);
+                CharSum += CharacterChecks[i].checked;
+            }
+    
+            // Get all the Checks from the Weapon Section
+            const WeaponSection = document.getElementById('WeaponSection');
+            const WeaponChecks = WeaponSection.getElementsByTagName('input');
+            let WeapChecks = [];
+            let WeapSum = 0;
+            for(let i = 0; i < WeaponChecks.length; i++)
+            {
+                WeapChecks.push(WeaponChecks[i].checked);
+                WeapSum += WeaponChecks[i].checked;
+            }
+    
+            // console.log(CharSum, WeapSum)
+            if(CharSum >=1 && WeapSum >=1)
+            {
+                // Remove unchecked weapon entries
+                document.getElementById("tableMsg").innerText = "Valid table!";
+                tempMatrix = JSON.parse(JSON.stringify(matrix));
+                // console.log(Object.keys(tempMatrix));
+                for(let i = 0; i < WeapChecks.length; i++)
+                {
+                    if(!WeapChecks[i]) delete tempMatrix[i.toString()]
+                }
+    
+                // This line removes all the empty entries and converts it into an array of values to access easily.
+                tempMatrix = Object.values(Object.fromEntries(Object.entries(tempMatrix).filter(([_, v]) => v != null)));
+                console.log("Reduced Weapon Matrix:", tempMatrix);
+    
+                // Table Data and Table Header info
+                let TableData = []
+                let TableHeader = ["User/Weapon", "Weapon Info"]
+                
+                // Remove Unselected Character Keys in each Weapon Match Array
+                for(let i = 0; i < tempMatrix.length; i++)
+                {
+                    let WeapKeys = Object.keys(tempMatrix[i]);
+                    let WeapVals = Object.values(tempMatrix[i]);
+                    for(let j = 0; j < CharChecks.length; j++)
+                    {
+                        if(!CharChecks[j])
+                        {
+                            delete WeapKeys[j  + 2];
+                            delete WeapVals[j  + 2];
+                        }
+                    }
+                    WeapKeys = Object.values(Object.fromEntries(Object.entries(WeapKeys).filter(([_, v]) => v != null)));
+                    WeapVals = Object.values(Object.fromEntries(Object.entries(WeapVals).filter(([_, v]) => v != null)));
+                    
+                    TableData.push(WeapVals)
+                }
+    
+                // Add the selected characters to the table header
+                for(let j = 0; j < CharChecks.length; j++)
+                {
+                    if(CharChecks[j])
+                    {
+                        TableHeader.push(ReducedCharacterList[j + 1])
+                    }
+                }
+    
+                // console.log(TableHeader)
+                // console.log(TableData)
+    
+                let TableHeaderHTML = "";
+                for(let i = 0; i < TableHeader.length; i++)
+                {
+                    TableHeaderHTML += "<th>";
+                    TableHeaderHTML += TableHeader[i];
+                    TableHeaderHTML += "</th>"; 
+                }
+                
+                let TableBodyHTML = "";
+                for(let i = 0; i < TableData.length; i++)
+                {
+                    TableBodyHTML += "<tr>"
+                    for(let j = 0; j < TableData[i].length; j++)
+                    {
+                        TableBodyHTML += "<td>"
+                        TableBodyHTML += TableData[i][j];
+                        TableBodyHTML += "</td>"
+                    }
+                    TableBodyHTML += "</tr>"
+                }
+                document.getElementById('MatrixTableHeader').innerHTML = TableHeaderHTML;
+                document.getElementById('MatrixTableBody').innerHTML = TableBodyHTML;
+                document.getElementById("Selections").style.display = "none";
+                console.log("Table loaded!");
+            }
+            else
+            {
+                document.getElementById("tableMsg").innerText = "Invalid table! Select atleast one character and one weapon to compare.";
+            }
+        }
+        function StartOver()
+        {
+            location.reload();
+        }
+    </script>
+        
+
+
+        <!-- Footer -->
+        <footer id="footer" class="">
+            <div class="inner">
+                <ul class="icons">
+                    <li><a href="https://www.quora.com/profile/Arun-Prasaad-Gunasekaran" target="_blank" class="icon alt fa-quora"><span class="label">Quora</span></a></li>
+                    <li><a href="https://www.youtube.com/channel/UCUJFj-PXuWLRfFFHA44ZGYw" target="_blank" class="icon alt fa-youtube-play"><span class="label">YouTube</span></a></li>
+                    <li><a href="https://github.com/arunprasaad2711" target="_blank" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+                    <li><a href="https://www.instagram.com/fluidiccolours/" target="_blank" class="icon alt fa-instagram"><span class="label">Instagram</span></a></li>
+                    <li><a href="mailto:arunprasaad2711@gmail.com" target="_blank" class="icon alt fa-envelope-o"><span class="label">Mail</span></a></li>
+                </ul>
+                <p>
+                    All rights reserved to their respective owners | Arun Prasaad Gunasekaran | Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a>
+                </p>
+            </div>
+        </footer>
+        
+    </div>
+
+    <!-- D3Js library for plotting -->
+<!-- script src="https://d3js.org/d3.v5.min.js"></script-->
+
+<!-- Plotly.js for plotting -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<!-- BokehJS-->
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.3.0.min.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.3.0.min.js"></script>
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.0.min.js"></script>
+<script type="text/javascript">
+    Bokeh.set_log_level("info");
+</script>
+
+<!-- Commenting out this section, as KaTeX is working perfectly. -->
+<!-- MathJax -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script> -->
+<!-- MathJax configuration -->
+<!-- <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'],
+        TeX: {  equationNumbers: { autoNumber: "AMS" },
+                extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        fonts: ["TeX"],
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true }
+    }
+}); -->
+</script>
+
+
+    <script src="../../assets/js/jquery.min.js"></script>
+    <script src="../../assets/js/jquery.scrolly.min.js"></script>
+    <script src="../../assets/js/jquery.scrollex.min.js"></script>
+    <script src="../../assets/js/browser.min.js"></script>
+    <script src="../../assets/js/breakpoints.min.js"></script>
+    <script src="../../assets/js/util.js"></script>
+    <script src="../../assets/js/main.js"></script>
+
+
+
+</body>
+</html>
