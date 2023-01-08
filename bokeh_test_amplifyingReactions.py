@@ -7,11 +7,11 @@ from bokeh.plotting import figure, output_file, show, ColumnDataSource
 from bokeh.embed import components
 
 EM = np.linspace(0, 1000, 50)
-DMG = 2.0 * (1.0 + (2.78 * EM)/(1400 * EM) + 0.0)
+DMG = 2.0 * (1.0 + (2.78 * EM)/(1400 + EM) + 0.0)
 
 source = ColumnDataSource(data=dict(x=EM, y=DMG))
 
-plot = figure(y_range=(0, 8), plot_width=800, plot_height=400)
+plot = figure(y_range=(0, 12), plot_width=800, plot_height=400)
 
 plot.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
 
