@@ -213,6 +213,31 @@
     Bokeh.set_log_level("info");
 </script>
 <hr />
+<h2 id="additive-reactions">Additive Reactions</h2>
+<p>These reactions add a massive flat damage to the base damage. This damage is independent of the ATK percent. However, together with the base ATK and flat damage, this damage can scale with crit damage.</p>
+<p><span class="math display">\[
+\text{AmplifyingReaction} = \text{ReactionMultiplier} \times \text{LevelMultiplier} \times \displaystyle\left[  1 + \frac{5 \times \text{EM}}{1200 + \text{EM}} + \text{ReactionBonus}\right]
+\]</span></p>
+<p>Where the reaction multiplier is</p>
+<p><span class="math display">\[
+\begin{equation*}
+\text{ReactionMultiplier} =
+\begin{cases}
+1.25 &amp; \text{if, triggering {\color{LimeGreen}Spread}} \\
+1.15 &amp; \text{if, triggering {\color{DarkOrchid}Aggravate}}
+\end{cases}
+\end{equation*}
+\]</span></p>
+<h3 id="python">Python</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elemental Mastery Increased Linearly</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>EM <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">1000</span>, <span class="dv">50</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># RB - Reaction Bonus</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># RM - Reaction Multiplier</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># LM - Level Multiplier</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># DMG - Damage scaling</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>DMG <span class="op">=</span> RM <span class="op">*</span> LM <span class="op">*</span> (<span class="fl">1.0</span> <span class="op">+</span> (<span class="dv">5</span> <span class="op">*</span> EM)<span class="op">/</span>(<span class="dv">1200</span> <span class="op">+</span> EM) <span class="op">+</span> RB)</span></code></pre></div>
 <h2 id="status">Status</h2>
 <p>Test run successful!</p>
 <h2 id="notes">Notes</h2>
@@ -240,7 +265,37 @@
         
     </div>
 
-    
+    <script type="text/javascript" language="javascript">
+const copyButtonLabel = "Copy Code";
+
+// use a class selector if available
+let blocks = document.querySelectorAll("pre");
+
+blocks.forEach((block) => {
+    // only add button if browser supports Clipboard API
+    if (navigator.clipboard) {
+    let button = document.createElement("a");
+    button.className = "button small"
+
+    button.innerText = copyButtonLabel;
+    button.style.cssText = "align:right;"
+    block.appendChild(button);
+
+    button.addEventListener("click", async () => {
+        await copyCode(block);
+    });
+    }
+});
+
+async function copyCode(block) {
+    let code = block.querySelector("code");
+    let text = code.innerText;
+
+    await navigator.clipboard.writeText(text);
+}
+</script>
+
+
     <script src="../../assets/js/jquery.min.js"></script>
     <script src="../../assets/js/jquery.scrolly.min.js"></script>
     <script src="../../assets/js/jquery.scrollex.min.js"></script>

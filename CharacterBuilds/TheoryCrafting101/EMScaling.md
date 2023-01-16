@@ -172,6 +172,40 @@ Note: The Level Multiplier calculation is a bit wrong. Level Multiplier is a non
 
 ---
 
+## Additive Reactions
+These reactions add a massive flat damage to the base damage. This damage is independent of the ATK percent. However, together with the base ATK and flat damage, this damage can scale with crit damage.
+
+$$
+\text{AmplifyingReaction} = \text{ReactionMultiplier} \times \text{LevelMultiplier} \times \displaystyle\left[  1 + \frac{5 \times \text{EM}}{1200 + \text{EM}} + \text{ReactionBonus}\right]
+$$
+
+Where the reaction multiplier is
+
+$$
+\begin{equation*}
+\text{ReactionMultiplier} =
+\begin{cases}
+1.25 & \text{if, triggering {\color{LimeGreen}Spread}} \\
+1.15 & \text{if, triggering {\color{DarkOrchid}Aggravate}}
+\end{cases}
+\end{equation*}
+$$
+
+### Python
+
+```python
+# Elemental Mastery Increased Linearly
+EM = np.linspace(0, 1000, 50)
+
+# RB - Reaction Bonus
+# RM - Reaction Multiplier
+# LM - Level Multiplier
+# DMG - Damage scaling
+
+DMG = RM * LM * (1.0 + (5 * EM)/(1200 + EM) + RB)
+```
+
+
 ## Status
 Test run successful!
 
